@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "genders")
+@Table(name = "gender")
 public class Gender {
 
     @Id
@@ -21,6 +21,6 @@ public class Gender {
     @Column(length = 20, nullable = false)
     private String gender_name;
 
-//    @ManyToOne
+//    @ManyToOne(optional = false)
 //    private User user;
 }

@@ -45,7 +45,7 @@ public class User {
     private String full_number1;
 
     // Гендер
-    @OneToMany()
+    @ManyToOne
     @JoinColumn(name = "gender_id", referencedColumnName = "id")
     private Gender gender;
 
