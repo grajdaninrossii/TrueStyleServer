@@ -1,16 +1,22 @@
 package com.truestyle.entity;
 
 import jakarta.persistence.*;
-import jakarta.websocket.OnError;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data // Lombok
 @NoArgsConstructor // Для того, чтобы Спринг смог создать бин
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "users",
+       uniqueConstraints = {
+        @UniqueConstraint(columnNames = "username"),
+               @UniqueConstraint(columnNames = "email")
+       })
 public class User {
 
     // id пользователя
@@ -20,16 +26,16 @@ public class User {
     private Long id;
 
     // username имя пользователя
-    @Column(name = "user_name", nullable = false)
-    private String userName;
+    @Column(nullable = false)
+    private String username;
 
     // email пользователя
     @Column(nullable = false)
     private String email;
 
     // Ссылка на пароли
-    @Column(name = "hash_password", nullable = false)
-    private String hashPassword;
+    @Column(nullable = false)
+    private String password;
 
     // Хранение номера телефона
     @Column(length = 4)
@@ -42,7 +48,7 @@ public class User {
     private String number;
 
     @Column(length = 15)
-    private String full_number1;
+    private String full_number;
 
     // Гендер
     @ManyToOne
@@ -57,8 +63,51 @@ public class User {
     @Column
     private String photo_url;
 
-    // Токен авторизации
-    @OneToOne
-    @JoinColumn(name = "token_id", referencedColumnName = "id")
-    private Token token;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
+
+    public User(String username, String email, String password){
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
+
+
+//    // Токен авторизации
+//    @OneToOne
+//    @JoinColumn(name = "token_id", referencedColumnName = "id")
+//    private Token token;
 }
+//
+//@Entity
+//@Data
+//@NoArgsConstructor
+//@Table(name = "users",
+//        uniqueConstraints = {
+//                @UniqueConstraint(columnNames = "username"),
+//                @UniqueConstraint(columnNames = "email")
+//        })
+//public class User {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    private String username;
+//    private String email;
+//    private String password;
+//    @ManyToMany(fetch = FetchType.EAGER)
+//    @JoinTable(name = "user_roles",
+//            joinColumns = @JoinColumn(name = "user_id"),
+//            inverseJoinColumns = @JoinColumn(name = "role_id"))
+//    private Set<Role> roles = new HashSet<>();
+//
+//    public User(String username, String email, String password) {
+//        this.username = username;
+//        this.email = email;
+//        this.password = password;
+//    }
+//}
