@@ -2,18 +2,17 @@ package com.truestyle.repository;
 
 import com.truestyle.entity.User;
 import jakarta.persistence.Table;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+//import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-@Table(name = "users")
-public interface UserRepository extends CrudRepository<User, Long> {
-//
-//    User findByUserId(Integer id);
-//
-//    User findByUserName(String user_name);
-//
-//    List<User> findAll();
+public interface UserRepository extends JpaRepository<User, Long> {
+
+    Optional<User> findByUsername(String username);
+    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
 }

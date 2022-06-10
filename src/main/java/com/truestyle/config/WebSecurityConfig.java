@@ -1,44 +1,69 @@
 package com.truestyle.config;
 
+import com.truestyle.config.jwt.AuthEntryPointJwt;
+import com.truestyle.config.jwt.AuthTokenFilter;
+import com.truestyle.service.UserDetailsImpl;
+import com.truestyle.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
 @EnableWebSecurity
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true) // подрубаем аннотацию для работы с ролями
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests() // Включаем авторизацию
-                .antMatchers("/", "/home").permitAll() // По этому пути разрешаем полный доступ
-                .anyRequest().authenticated() // Для остальных запросов требуем авторизацию
-                .and()
-                .formLogin() // Включаем форму логин
-                .loginPage("/login") // Указываем, что страница логина находится на /login
-                .permitAll() // Разрешаем пользоваться всем
-                .and()
-                .logout() // Включаем logout
-                .permitAll(); // Разрешаем пользоваться всем
+
+    @Autowired
+    UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
+
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
     }
 
-    // Менеджер учетных записей
+    @Override
+    public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception{
+        // Что испльзуем для аутентификации
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+    }
+
     @Bean
     @Override
-    public UserDetailsService userDetailsService() {
-        UserDetails user =
-                User.withDefaultPasswordEncoder()
-                        .username("user")
-                        .password("password")
-                        .roles("USER")
-                        .build();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        // Какой аутентификационный менеджер мы используем
+        return super.authenticationManagerBean();
+    }
 
-        return new InMemoryUserDetailsManager(user);
+    // Кодируем пароли
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+
+        http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // Не нужно использовать куки
+                .authorizeRequests() // указываем api для авторизации
+                    .antMatchers("/api/auth/**").permitAll() // Указываем открытые ресурсы
+                    .antMatchers("/api/test/**").permitAll()
+                    .anyRequest().authenticated(); // Остальные ресурсы защищены
+
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }
