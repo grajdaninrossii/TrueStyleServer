@@ -54,14 +54,15 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
 
+        // Менеджер аутентификации, передаем в конструктор токен аутентификации, в котором имя пользователя и пароль
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()));
 
+        // Устанавливаем аутентификацию
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication);
-        System.out.println("hi");
+        String jwt = jwtUtils.generateJwtToken(authentication); // генерируем токен
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<String> roles = userDetails.getAuthorities().stream()
@@ -107,32 +108,32 @@ public class AuthController {
         } else {
             reqRoles.forEach(r -> {
                 switch (r) {
-                    case "admin":
+                    case "admin" -> {
                         Role adminRole = roleRepository
                                 .findByName(ERole.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error, Role ADMIN is not found"));
                         roles.add(adminRole);
-
-                        break;
-                    case "mod":
+                    }
+                    case "mod" -> {
                         Role modRole = roleRepository
                                 .findByName(ERole.ROLE_MODERATOR)
                                 .orElseThrow(() -> new RuntimeException("Error, Role MODERATOR is not found"));
                         roles.add(modRole);
+                    }
 
-                        break;
-
-                        // По дефолту добавляем роль User
-                    default:
+                    // По дефолту добавляем роль User
+                    default -> {
                         Role userRole = roleRepository
                                 .findByName(ERole.ROLE_USER)
                                 .orElseThrow(() -> new RuntimeException("Error, Role USER is not found"));
                         roles.add(userRole);
+                    }
                 }
             });
         }
+        // Устанавливаем роли нашему пользователю (код сверху это жесть, нужно переписать)
         user.setRoles(roles);
-        userRepository.save(user);
+        userRepository.save(user); // сохраняем пользователя в бд
         return ResponseEntity.ok(new MessageResponse("User CREATED"));
     }
 }

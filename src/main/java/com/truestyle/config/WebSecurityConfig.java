@@ -20,8 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSeсurityConfig extends WebSecurityConfigurerAdapter {
+@EnableGlobalMethodSecurity(prePostEnabled = true) // подрубаем аннотацию для работы с ролями
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
@@ -61,7 +61,7 @@ public class WebSeсurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // Не нужно использовать куки
                 .authorizeRequests() // указываем api для авторизации
                     .antMatchers("/api/auth/**").permitAll() // Указываем открытые ресурсы
-                    .antMatchers("/api/test/**").permitAll() 
+                    .antMatchers("/api/test/**").permitAll()
                     .anyRequest().authenticated(); // Остальные ресурсы защищены
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

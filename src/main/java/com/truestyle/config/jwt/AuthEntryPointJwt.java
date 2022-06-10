@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// Что происходит, если гг
 @Component
 public class AuthEntryPointJwt implements AuthenticationEntryPoint {
     @Override

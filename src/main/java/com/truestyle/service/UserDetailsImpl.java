@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 // Выделение бизнес-логики
 // Сериализатор для нашего пользователя
 //@Data
+@Getter
 @AllArgsConstructor
 public class UserDetailsImpl implements UserDetails {
 
@@ -83,14 +84,6 @@ public class UserDetailsImpl implements UserDetails {
         return username;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -129,10 +122,7 @@ public class UserDetailsImpl implements UserDetails {
             return false;
         UserDetailsImpl other = (UserDetailsImpl) obj;
         if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        return true;
+            return other.id == null;
+        } else return id.equals(other.id);
     }
 }
