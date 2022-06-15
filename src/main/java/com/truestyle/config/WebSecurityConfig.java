@@ -62,8 +62,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // указываем api для авторизации
                     .antMatchers("/api/auth/**").permitAll() // Указываем открытые ресурсы
                     .antMatchers("/api/test/**").permitAll()
+                    .antMatchers("/arts/**").permitAll()
+                    .antMatchers("/clothes/images/**").permitAll()
                     .anyRequest().authenticated(); // Остальные ресурсы защищены
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
 }

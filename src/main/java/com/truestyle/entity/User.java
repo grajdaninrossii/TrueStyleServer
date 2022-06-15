@@ -1,15 +1,17 @@
 package com.truestyle.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
-@Data // Lombok
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor // Для того, чтобы Спринг смог создать бин
 @AllArgsConstructor
 @Table(name = "users",
@@ -69,6 +71,18 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "likes_stuff",
+             joinColumns = @JoinColumn(name = "user_id"),
+             inverseJoinColumns = @JoinColumn(name = "stuff_id"))
+    private Set<Stuff> likesStuff = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "wardrobe",
+             joinColumns = @JoinColumn(name = "user_id"),
+             inverseJoinColumns = @JoinColumn(name = "stuff_id"))
+    private Set<Stuff> wardrobe = new HashSet<>();
+
     public User(String username, String email, String password){
         this.username = username;
         this.email = email;
@@ -80,6 +94,19 @@ public class User {
 //    @OneToOne
 //    @JoinColumn(name = "token_id", referencedColumnName = "id")
 //    private Token token;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
 //
 //@Entity

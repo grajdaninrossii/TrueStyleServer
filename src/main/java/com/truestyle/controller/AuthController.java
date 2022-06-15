@@ -2,6 +2,7 @@ package com.truestyle.controller;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,7 +16,9 @@ import com.truestyle.pojo.MessageResponse;
 import com.truestyle.pojo.SignupRequest;
 import com.truestyle.repository.RoleRepository;
 import com.truestyle.repository.UserRepository;
+import com.truestyle.service.AuthService;
 import com.truestyle.service.UserDetailsImpl;
+import com.truestyle.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,13 +43,7 @@ public class AuthController {
     AuthenticationManager authenticationManager;
 
     @Autowired
-    UserRepository userRepository;
-
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    AuthService authService;
 
     @Autowired
     JwtUtils jwtUtils;
@@ -80,60 +77,10 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 
-        // Если пользователь есть в базе, то возвращаем сообщение об ошибке
-        if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is exist"));
+        List<String> regRez = authService.addUser(signupRequest);
+        if ("bad".equals(regRez.get(0))){
+            return ResponseEntity.badRequest().body(regRez.get(1));
         }
-
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is exist"));
-        }
-
-        User user = new User(signupRequest.getUsername(),
-                signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()));
-
-        Set<String> reqRoles = signupRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if (reqRoles == null) {
-            Role userRole = roleRepository
-                    .findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error, Role USER is not found"));
-                    roles.add(userRole);
-        } else {
-            reqRoles.forEach(r -> {
-                switch (r) {
-                    case "admin" -> {
-                        Role adminRole = roleRepository
-                                .findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error, Role ADMIN is not found"));
-                        roles.add(adminRole);
-                    }
-                    case "mod" -> {
-                        Role modRole = roleRepository
-                                .findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error, Role MODERATOR is not found"));
-                        roles.add(modRole);
-                    }
-
-                    // По дефолту добавляем роль User
-                    default -> {
-                        Role userRole = roleRepository
-                                .findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error, Role USER is not found"));
-                        roles.add(userRole);
-                    }
-                }
-            });
-        }
-        // Устанавливаем роли нашему пользователю (код сверху это жесть, нужно переписать)
-        user.setRoles(roles);
-        userRepository.save(user); // сохраняем пользователя в бд
         return ResponseEntity.ok(new MessageResponse("User CREATED"));
     }
 }
