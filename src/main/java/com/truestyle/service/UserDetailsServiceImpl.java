@@ -1,6 +1,7 @@
 package com.truestyle.service;
 
 import com.truestyle.entity.ERole;
+import com.truestyle.entity.Gender;
 import com.truestyle.entity.Role;
 import com.truestyle.entity.User;
 import com.truestyle.pojo.MessageResponse;
@@ -31,5 +32,21 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username:" + username));
         return UserDetailsImpl.build(user);
+    }
+
+    public Boolean setNumberOfUser(String number){
+        return false;
+    }
+
+    public Boolean setGenderOfUser(Gender gender){
+        return false;
+    }
+
+    public Boolean setCountryOfUser(String country){
+        return false;
+    }
+
+    public Boolean setPhotoOfUser(String photo_url){
+        return false;
     }
 }

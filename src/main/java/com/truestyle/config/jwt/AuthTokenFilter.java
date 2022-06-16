@@ -15,9 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.security.Security;
-import java.util.logging.Filter;
-import java.util.logging.LogRecord;
 
 public class AuthTokenFilter extends OncePerRequestFilter {
 

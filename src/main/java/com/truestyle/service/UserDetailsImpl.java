@@ -61,10 +61,10 @@ public class UserDetailsImpl implements UserDetails {
                 user.getCode_number1(),
                 user.getCode_number2(),
                 user.getNumber(),
-                user.getFull_number(),
+                user.getFullNumber(),
                 user.getGender(),
                 user.getCountry(),
-                user.getPhoto_url(),
+                user.getPhotoUrl(),
                 user.getRoles(),
                 authorities);
     }

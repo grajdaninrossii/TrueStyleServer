@@ -21,7 +21,11 @@ public class StuffService {
 
     public StuffService(StuffRepository stuffRepository) {this.stuffRepository = stuffRepository;}
 
-    String addOneStuff(Stuff stuff) {
+    public Stuff findById(Long id){
+        return stuffRepository.findById(id).orElseThrow(() -> new RuntimeException("Error, Stuff is not found"));
+    }
+
+    public String addOneStuff(Stuff stuff) {
         stuffRepository.save(stuff);
         return "ok";
     }
@@ -36,6 +40,14 @@ public class StuffService {
     Stuff getOneStuff(Long id) {
         final Optional<Stuff> optStuff = stuffRepository.findById(id);
         return optStuff.orElse(null);
+    }
+
+    public List<Stuff> getStuffBySeason(String season){
+        return stuffRepository.findAllByOrderSeason(season);
+    }
+
+    public List<Stuff> getStuffByRecommended() {
+        return stuffRepository.findByRecommended();
     }
 
     // Получить все записи (все вещи)

@@ -1,19 +1,30 @@
 package com.truestyle.service;
 
+import com.truestyle.config.jwt.JwtUtils;
 import com.truestyle.entity.ERole;
 import com.truestyle.entity.Role;
 import com.truestyle.entity.User;
+import com.truestyle.pojo.JwtResponse;
+import com.truestyle.pojo.LoginRequest;
 import com.truestyle.pojo.SignupRequest;
 import com.truestyle.repository.RoleRepository;
 import com.truestyle.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -26,6 +37,36 @@ public class AuthService {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    JwtUtils jwtUtils;
+
+    public JwtResponse getUserData(LoginRequest loginRequest) {
+
+        // Менеджер аутентификации, передаем в конструктор токен аутентификации, в котором имя пользователя и пароль
+        Authentication authentication = authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()));
+
+        // Устанавливаем аутентификацию
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication); // генерируем токен
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
+
+        return new JwtResponse(jwt,
+                userDetails.getId(),
+                userDetails.getUsername(),
+                userDetails.getEmail(),
+                roles);
+    }
 
     public List<String> addUser(SignupRequest signupRequest){
         // Если пользователь есть в базе, то возвращаем сообщение об ошибке
@@ -44,7 +85,7 @@ public class AuthService {
         Set<String> reqRoles = signupRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
-        System.out.println(reqRoles);
+//        System.out.println(reqRoles);
 
         if (reqRoles == null) {
             Role userRole = roleRepository
@@ -81,5 +122,19 @@ public class AuthService {
         user.setRoles(roles);
         userRepository.save(user); // сохраняем пользователя в бд
         return Arrays.asList("good", "User CREATED");
+    }
+
+    public List<String> checkUsername(String username){
+        if (userRepository.existsByUsername(username)){
+            return Arrays.asList("bad", "Error: Username is exist");
+        }
+        return Arrays.asList("good", "Username isn't exist yet");
+    }
+
+    public List<String> checkEmail(String email){
+        if (userRepository.existsByEmail(email)){
+            return Arrays.asList("bad", "Error: Email is exist");
+        }
+        return Arrays.asList("good", "Email isn't exist yet");
     }
 }
