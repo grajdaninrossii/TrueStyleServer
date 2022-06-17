@@ -2,14 +2,19 @@ package com.truestyle.service;
 
 import com.truestyle.config.jwt.JwtUtils;
 import com.truestyle.entity.ERole;
+import com.truestyle.entity.PasswordResetToken;
 import com.truestyle.entity.Role;
 import com.truestyle.entity.User;
 import com.truestyle.pojo.JwtResponse;
 import com.truestyle.pojo.LoginRequest;
 import com.truestyle.pojo.SignupRequest;
+import com.truestyle.repository.PasswordTokenRepository;
 import com.truestyle.repository.RoleRepository;
 import com.truestyle.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.catalina.Store;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,10 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,6 +45,7 @@ public class AuthService {
 
     @Autowired
     JwtUtils jwtUtils;
+
 
     public JwtResponse getUserData(LoginRequest loginRequest) {
 
@@ -137,4 +140,5 @@ public class AuthService {
         }
         return Arrays.asList("good", "Email isn't exist yet");
     }
+
 }

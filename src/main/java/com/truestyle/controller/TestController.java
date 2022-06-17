@@ -2,8 +2,10 @@ package com.truestyle.controller;
 
 import com.truestyle.entity.Gender;
 import com.truestyle.entity.Stuff;
+import com.truestyle.service.AuthService;
 import com.truestyle.service.StuffService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +21,9 @@ public class TestController {
 
     @Autowired
     private StuffService stuffService;
+
+    @Autowired
+    private AuthService authService;
 
     @GetMapping("/all")
     public String getAll() {
@@ -53,6 +58,15 @@ public class TestController {
 //    @RequestMapping(value = "/kek", method = RequestMethod.GET)
 //    public String getTest(){
 //        return "test.html";
+//    }
+
+//    @GetMapping("/mail")
+//    public ResponseEntity<?> getNewPassword(@RequestParam String email){
+//        List<String> result = authService.sendNewPassword(email);
+//        if ("bad".equals(result.get(0))){
+//            return ResponseEntity.badRequest().body(result.get(1));
+//        }
+//        return ResponseEntity.ok(result.get(1));
 //    }
 
     @GetMapping("/add/testStuff")

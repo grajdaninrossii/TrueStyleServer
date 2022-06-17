@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.truestyle.pojo.*;
 import com.truestyle.service.AuthService;
+import com.truestyle.service.SecurityService;
 import com.truestyle.service.SettingService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,8 +20,6 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @Autowired
-    SettingService settingService;
 
     /** Аутентификация пользователя
      *
@@ -95,30 +95,5 @@ public class AuthController {
         return ResponseEntity.ok(message);
     }
 
-    /** Обновление полей пользователя(без email, password, username)
-     *
-     * @param settingRequest - JSON(Объект SettingRequest) вида {
-     *     "fullNumber": "8**********",
-     *     "gender": 1,
-     *     "country": "Russia",
-     *     "photoUrl": "heh"
-     * }
-     * @return - вернет сообщение об успешном добавление
-     * иначе сообщение об ошибке
-     */
-    @PostMapping("/setting")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
-    public ResponseEntity<?> setDetailsUser(@RequestBody SettingRequest settingRequest){
-        List<String> result = settingService.saveUserSettings(settingRequest);
-        MessageResponse message = new MessageResponse(result.get(1));
-        if ("bad".equals(result.get(0))){
-            return ResponseEntity.badRequest().body(message);
-        }
-        return ResponseEntity.ok(message);
-    }
 
-//    @PostMapping("/setting/password")
-//    public ResponseEntity<?> setNewPassword(@RequestBody LoginRequest user){
-//
-//    }
 }
