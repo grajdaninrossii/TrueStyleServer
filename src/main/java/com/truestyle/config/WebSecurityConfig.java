@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // Не нужно использовать куки
                 .authorizeRequests() // указываем api для авторизации
                     .antMatchers("/auth/**").permitAll() // Указываем открытые ресурсы
-                    .antMatchers("/api/test/**").permitAll()
+//                    .antMatchers("/api/test/**").permitAll()
                     .antMatchers("/arts/**").permitAll()
 //                    .antMatchers("/clothes/images/**").authenticated()
                     .anyRequest().authenticated(); // Остальные ресурсы защищены

@@ -24,7 +24,7 @@ public class StuffController {
     @Autowired
     StuffService stuffService;
 
-    /** Получить статьи для рекоммендаций
+    /** Получить одежду для рекоммендаций
      *
      * нужен токен!
      * @return JSON(List<Stuff>)
