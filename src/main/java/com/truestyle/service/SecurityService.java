@@ -96,7 +96,7 @@ public class SecurityService {
         PasswordResetToken userId = passwordTokenRepository.findByToken(token);
         User user = userId.getUser();
         if(user!=null) {
-            passwordTokenRepository.deleteByToken(token);
+//            passwordTokenRepository.deleteByToken(token);
             changeUserPassword(user, password);
             return Arrays.asList("good", "The Password changed");
         } else {

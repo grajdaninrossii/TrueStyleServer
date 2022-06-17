@@ -63,6 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/auth/**").permitAll() // Указываем открытые ресурсы
 //                    .antMatchers("/api/test/**").permitAll()
                     .antMatchers("/arts/**").permitAll()
+                    .antMatchers("/user/**").permitAll()
 //                    .antMatchers("/clothes/images/**").authenticated()
                     .anyRequest().authenticated(); // Остальные ресурсы защищены
 
