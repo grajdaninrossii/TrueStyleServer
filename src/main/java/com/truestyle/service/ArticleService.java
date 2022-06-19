@@ -30,8 +30,12 @@ public class ArticleService {
         return "ok";
     }
 
-    public List<Article> getStuffByRecommended() {
-        return articleRepository.findByRecommended();
+    public List<Article> getStuffByRecommendedThreeArt() {
+        return articleRepository.findByRecommendedThreeArt();
+    }
+
+    public List<Article> getStuffByRecommendedFiveArt() {
+        return articleRepository.findByRecommendedFiveArt();
     }
 
     public List<Article> getAllArts(){

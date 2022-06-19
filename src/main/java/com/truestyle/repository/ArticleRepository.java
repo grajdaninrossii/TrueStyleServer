@@ -12,8 +12,12 @@ import java.util.List;
 @Repository
 public interface ArticleRepository extends CrudRepository<Article, Long>{
 
+    @Query(value = "select * from article order by random() limit 3",
+            nativeQuery = true)
+    List<Article> findByRecommendedThreeArt();
+
     @Query(value = "select * from article order by random() limit 5",
             nativeQuery = true)
-    List<Article> findByRecommended();
+    List<Article> findByRecommendedFiveArt();
 
 }

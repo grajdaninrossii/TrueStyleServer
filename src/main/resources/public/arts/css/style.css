@@ -22,10 +22,21 @@ figcaption {
 }
 
 
+
 .imgage {
     object-fit: cover;
     /* size: 10px; */
     height: auto;
+}
+
+p {
+    padding: 16px;
+}
+
+h3, h4 {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
 }
 
 
@@ -36,6 +47,7 @@ figcaption {
     /* margin: 40px 1vmin; */
     display: flex;
     flex-direction: column;
+    /* padding: 2px; */
 	/* border-radius: 10px; */
     /* box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); */
 }
@@ -49,10 +61,6 @@ body {
     /* backdrop-filter: saturate(80%); */
     width: 100%;
     min-width: 350px;
-}
-
-p {
-    padding: 16px;
 }
 
 .title__text{

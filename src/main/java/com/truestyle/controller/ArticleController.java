@@ -38,13 +38,23 @@ public class ArticleController {
         return articleService.findById(id);
     }
 
-    /** Получить статьи для рекоммендаций
+    /** Получить статьи для рекоммендаций (Слайдер с тремя статьями)
      *
      * нужен токен!
      * @return JSON(List<Stuff>)
      */
-    @GetMapping("/recommended")
-    public List<Article> getStuffRecommended(){
-        return articleService.getStuffByRecommended();
+    @GetMapping("/recommended/tree")
+    public List<Article> getStuffByRecommendedThreeArt(){
+        return articleService.getStuffByRecommendedThreeArt();
+    }
+
+    /** Получить статьи для рекоммендаций (Слайдер на главном экране)
+     *
+     * нужен токен!
+     * @return JSON(List<Stuff>)
+     */
+    @GetMapping("/recommended/five")
+    public List<Article> getStuffByRecommendedFiveArt(){
+        return articleService.getStuffByRecommendedFiveArt();
     }
 }
