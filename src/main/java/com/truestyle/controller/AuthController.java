@@ -1,139 +1,99 @@
 package com.truestyle.controller;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import com.truestyle.config.jwt.JwtUtils;
-import com.truestyle.entity.ERole;
-import com.truestyle.entity.Role;
-import com.truestyle.entity.User;
-import com.truestyle.pojo.JwtResponse;
-import com.truestyle.pojo.LoginRequest;
-import com.truestyle.pojo.MessageResponse;
-import com.truestyle.pojo.SignupRequest;
-import com.truestyle.repository.RoleRepository;
-import com.truestyle.repository.UserRepository;
-import com.truestyle.service.UserDetailsImpl;
+import com.truestyle.pojo.*;
+import com.truestyle.service.AuthService;
+import com.truestyle.service.SecurityService;
+import com.truestyle.service.SettingService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @CrossOrigin(origins = "*", maxAge = 3600) // Работа с безопасностью браузера
 public class AuthController {
 
     @Autowired
-    AuthenticationManager authenticationManager;
+    AuthService authService;
 
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    RoleRepository roleRepository;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    JwtUtils jwtUtils;
-
+    /** Аутентификация пользователя
+     *
+     * @param loginRequest:JSON(Объект) вида {"user_name": String,
+     *                                          "password": String}
+     * @return - JSON вида {
+     *     "token": String,
+     *     "type": "Bearer",
+     *     "id": Integer,
+     *     "username": String,
+     *     "email": String,
+     *     "roles": List<Role>
+     * }
+     */
     @PostMapping("/signin")
     public ResponseEntity<?> authUser(@RequestBody LoginRequest loginRequest) {
-
-        // Менеджер аутентификации, передаем в конструктор токен аутентификации, в котором имя пользователя и пароль
-        Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
-
-        // Устанавливаем аутентификацию
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication); // генерируем токен
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
-                userDetails.getEmail(),
-                roles));
+        JwtResponse userData = authService.getUserData(loginRequest);
+        return ResponseEntity.ok(userData);
     }
 
+
+    /** Регистрация пользователя
+     *
+     * @param signupRequest - JSON(Объект) вида {
+     *     "username": String,
+     *     "email": String,
+     *     "password": String,
+     *     "roles": List<Role> (в виде json, например, список из всех доступных ролей: ["admin", "mod", "user"])
+     * }
+     * @return в случае успеха вернет "User CREATED" иначе 4** ошибку
+     */
     // Создание пользователя
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
 
-        // Если пользователь есть в базе, то возвращаем сообщение об ошибке
-        if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is exist"));
+        List<String> result = authService.addUser(signupRequest);
+        MessageResponse message = new MessageResponse(result.get(1));
+        if ("bad".equals(result.get(0))){
+            return ResponseEntity.badRequest().body(message);
         }
-
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is exist"));
-        }
-
-        User user = new User(signupRequest.getUsername(),
-                signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()));
-
-        Set<String> reqRoles = signupRequest.getRoles();
-        Set<Role> roles = new HashSet<>();
-
-        if (reqRoles == null) {
-            Role userRole = roleRepository
-                    .findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error, Role USER is not found"));
-                    roles.add(userRole);
-        } else {
-            reqRoles.forEach(r -> {
-                switch (r) {
-                    case "admin" -> {
-                        Role adminRole = roleRepository
-                                .findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error, Role ADMIN is not found"));
-                        roles.add(adminRole);
-                    }
-                    case "mod" -> {
-                        Role modRole = roleRepository
-                                .findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error, Role MODERATOR is not found"));
-                        roles.add(modRole);
-                    }
-
-                    // По дефолту добавляем роль User
-                    default -> {
-                        Role userRole = roleRepository
-                                .findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error, Role USER is not found"));
-                        roles.add(userRole);
-                    }
-                }
-            });
-        }
-        // Устанавливаем роли нашему пользователю (код сверху это жесть, нужно переписать)
-        user.setRoles(roles);
-        userRepository.save(user); // сохраняем пользователя в бд
-        return ResponseEntity.ok(new MessageResponse("User CREATED"));
+        return ResponseEntity.ok(message);
     }
+
+    /** Проверка на наличие пользователя в бд по username
+     *
+     * @param username - имя пользователя для проверки
+     * @return в случае успеха вернет сообщение о том, что все гуд
+     * иначе сообщение об ошибке
+     */
+    @GetMapping("check/username")
+    public ResponseEntity<?> checkUsername(@RequestParam String username){
+        List<String> result = authService.checkUsername(username);
+        MessageResponse message = new MessageResponse(result.get(1));
+        if ("bad".equals(result.get(0))){
+         return ResponseEntity.badRequest().body(message);
+        }
+        return ResponseEntity.ok(message);
+    }
+
+    /** Проверка на наличие пользователя в бд по email
+     *
+     * @param username - имя пользователя для проверки
+     * @return в случае успеха вернет сообщение о том, что все гуд
+     * иначе сообщение об ошибке
+     */
+    @GetMapping("check/email")
+    public ResponseEntity<?> checkEmail(@RequestParam String username){
+        List<String> result = authService.checkEmail(username);
+        MessageResponse message = new MessageResponse(result.get(1));
+        if ("bad".equals(result.get(0))){
+            return ResponseEntity.badRequest().body(message);
+        }
+        return ResponseEntity.ok(message);
+    }
+
+
 }

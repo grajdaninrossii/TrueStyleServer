@@ -1,0 +1,94 @@
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+div {
+    font-family: 'Roboto', sans-serif;
+}
+
+figure {
+    /* border: 1px solid #ccc; рамка */
+    background-color: white; /* цвет фона */
+    /* padding: 5px; отступы от картинки */
+    /* width: 182px; ширина картинки */
+    color: rgba(0, 0, 0, 0.355);
+}
+figcaption {
+    padding-top: 7px;
+    padding: 7px 16px 0 16px;
+    text-align: center; /* подпись по центру*/
+}
+
+
+
+.imgage {
+    object-fit: cover;
+    /* size: 10px; */
+    height: auto;
+}
+
+p {
+    padding: 16px;
+}
+
+h3, h4 {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+}
+
+
+
+.wrapper__image {
+	/* height: auto; */
+	/* width: fit-content; */
+    /* margin: 40px 1vmin; */
+    display: flex;
+    flex-direction: column;
+    /* padding: 2px; */
+	/* border-radius: 10px; */
+    /* box-shadow: 0 0 30px rgba(0, 0, 0, 0.5); */
+}
+
+
+body {
+    margin: 0;
+	background-attachment: fixed;
+	background-color: #fff;
+    background-size: cover;
+    /* backdrop-filter: saturate(80%); */
+    width: 100%;
+    min-width: 350px;
+}
+
+.title__text{
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    color: #000000e4;
+}
+.main__text{
+    display: flex;
+    flex-direction: column;
+    color: #000000c1;
+}
+.footer{
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    color: #2f2f2fe4;
+    /* padding: 16px; */
+}
+
+
+
+/* .wrapper {
+    width: 100%;
+	min-height: 100vh;
+	display: flex;
+	justify-content: center;
+	min-width: 150px;
+} */
+

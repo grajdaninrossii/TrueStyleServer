@@ -60,10 +60,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and() // Не нужно использовать куки
                 .authorizeRequests() // указываем api для авторизации
-                    .antMatchers("/api/auth/**").permitAll() // Указываем открытые ресурсы
-                    .antMatchers("/api/test/**").permitAll()
+                    .antMatchers("/auth/**").permitAll() // Указываем открытые ресурсы
+//                    .antMatchers("/api/test/**").permitAll()
+                    .antMatchers("/arts/**").permitAll()
+                .antMatchers("/arts/newTrends.html").permitAll() // хз, че так не робит
+                    .antMatchers("/user/**").permitAll()
+//                    .antMatchers("/clothes/images/**").authenticated()
                     .anyRequest().authenticated(); // Остальные ресурсы защищены
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }
+
 }

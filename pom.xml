@@ -41,6 +41,11 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+
 
 <!--		Для регистрации и защиты данных-->
 <!--		Реализует SpringSecurity-->
@@ -105,9 +110,15 @@
 			<version>3.0.2</version>
 		</dependency>
 
+		<!-- Рассылка писем -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>2.7.0</version>
+		</dependency>
 
 
-<!--		Пока не юзаем-->
+		<!--		Пока не юзаем-->
 <!--		<dependency>-->
 <!--			<groupId>org.springframework.boot</groupId>-->
 <!--			<artifactId>spring-boot-starter-thymeleaf</artifactId>-->
