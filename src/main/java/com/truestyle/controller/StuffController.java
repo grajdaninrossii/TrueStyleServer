@@ -17,12 +17,17 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 public class StuffController {
 
-
     @Autowired
     WardrobeService wardrobeService;
 
     @Autowired
     StuffService stuffService;
+
+    // Переписать, чтобы возвращал еще картинку
+    @PostMapping("/get/cv")
+    public List<Stuff> getCvStuff(@RequestBody List<Integer> stuffData){
+        return stuffService.getStuffML(stuffData);
+    }
 
     /** Получить одежду для рекоммендаций
      *

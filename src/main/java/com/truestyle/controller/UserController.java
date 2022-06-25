@@ -4,6 +4,7 @@ package com.truestyle.controller;
 import com.truestyle.pojo.MessageResponse;
 import com.truestyle.pojo.NewPasswordRequest;
 import com.truestyle.pojo.SettingRequest;
+import com.truestyle.pojo.UserInfo;
 import com.truestyle.service.SecurityService;
 import com.truestyle.service.SettingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,14 @@ public class UserController {
             return ResponseEntity.badRequest().body(message);
         }
         return ResponseEntity.ok(message);
+    }
+
+
+    @GetMapping("/get/setting")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> getDetailsUser(){
+        UserInfo userInfo = settingService.getUserSetting();
+        return ResponseEntity.ok(userInfo);
     }
 
     /** Запрос на смену пароля
