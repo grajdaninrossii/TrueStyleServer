@@ -66,6 +66,11 @@ public class User {
     @JoinColumn(name = "gender_id", referencedColumnName = "id")
     private Gender gender;
 
+    // Цитата пользователя
+    @ManyToOne
+    @JoinColumn(name="style_user_id", referencedColumnName = "id")
+    private StyleUser styleUser;
+
     // Страна
     @Column
     @Size(min=2, max=120, message = "Country should be between 2 and 120 characters")

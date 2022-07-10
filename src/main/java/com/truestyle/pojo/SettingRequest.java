@@ -25,4 +25,8 @@ public class SettingRequest {
 
     // Фото(ссылка на фото)
     private String photoUrl;
+
+    // Слоган
+    private String stylePhrase;
+
 }

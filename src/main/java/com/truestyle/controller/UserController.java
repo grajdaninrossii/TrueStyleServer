@@ -1,12 +1,14 @@
 package com.truestyle.controller;
 
 
+import com.truestyle.entity.StyleUser;
 import com.truestyle.pojo.MessageResponse;
 import com.truestyle.pojo.NewPasswordRequest;
 import com.truestyle.pojo.SettingRequest;
 import com.truestyle.pojo.UserInfo;
 import com.truestyle.service.SecurityService;
 import com.truestyle.service.SettingService;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -37,7 +39,7 @@ public class UserController {
      * @return - вернет сообщение об успешном добавление
      * иначе сообщение об ошибке
      */
-    @PostMapping("/setting")
+    @PostMapping("/set/setting")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> setDetailsUser(@RequestBody SettingRequest settingRequest){
         List<String> result = settingService.saveUserSettings(settingRequest);
@@ -49,11 +51,51 @@ public class UserController {
     }
 
 
+    /** Получить настройки пользователя
+     *
+     * @return - вернет настройки пользователя
+     */
     @GetMapping("/get/setting")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<?> getDetailsUser(){
         UserInfo userInfo = settingService.getUserSetting();
         return ResponseEntity.ok(userInfo);
+    }
+
+    /** Получить цитату пользоватля
+     *
+     * @return цитату пользователя, если не установлена, то ничего не вернет
+     */
+    @GetMapping("/get/styleuser")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> getStyleUserForUser(){
+         StyleUser styleUser = settingService.getStyleUser();
+         if (styleUser != null){
+             return ResponseEntity.ok(styleUser);
+         }
+         return ResponseEntity.badRequest().body("User phrases is not exist");
+    }
+
+    /** Получить цитаты для пользователя (все)
+     *
+     * @return - вернет цитаты для пользователя
+     */
+    @GetMapping("/get/allphrases")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> getStyleUser(){
+        List<StyleUser> stylesUser = settingService.getAllStyleUser();
+        return ResponseEntity.ok(stylesUser);
+    }
+
+    /** Установить цитату для пользователя
+     *
+     * @return - вернет результат добавления
+     */
+    @PostMapping("/set/styleuser")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> setStyleUser(@RequestParam("id") Long idPhrase){
+        List<String> stylesUser = settingService.saveStyleUser(idPhrase);
+        return ResponseEntity.ok(stylesUser);
     }
 
     /** Запрос на смену пароля
