@@ -72,6 +72,7 @@ public class SettingService {
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(() -> new RuntimeException("Error, User is not found, но аутентифицирован!))"));
         UserInfo userInfo = new UserInfo();
 
+        userInfo.setUsername(user.getUsername());
         userInfo.setEmail(user.getEmail());
         userInfo.setFullNumber(user.getFullNumber());
         userInfo.setGender(user.getGender());

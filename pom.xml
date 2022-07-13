@@ -149,21 +149,17 @@
 <!--			<artifactId>flyway-core</artifactId>-->
 <!--		</dependency>-->
 
-	</dependencies>
 
+	</dependencies>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.7.1</version>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
+					<mainClass>com.truestyle.TrueStyleApplication</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
