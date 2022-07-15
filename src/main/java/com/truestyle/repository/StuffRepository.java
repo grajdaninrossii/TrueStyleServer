@@ -26,7 +26,7 @@ public interface StuffRepository extends CrudRepository<Stuff, Long> {
             nativeQuery = true)
     List<String> findUniqueSeasons();
 
-    @Query(value = "select DISTINCT article_type from stuff",
+    @Query(value = "select DISTINCT article_type from stuff order by article_type",
             nativeQuery = true)
     List<String> findArticleTypes();
 
@@ -43,9 +43,11 @@ public interface StuffRepository extends CrudRepository<Stuff, Long> {
     List<String> findSubCategory();
 
     // Чекнуть запрос
-    @Query(value = "select * from stuff s where s.article_type = ?1 and s.base_color =?2 and s.gender_id = ?3 and s.master_category = ?4 and s.season = ?5 or s.sub_category = ?6 limit 15",
+//    @Query(value = "select * from stuff where article_type = ?1 and base_color =?2 and gender_id = ?3 and master_category = ?4 and season = ?5 and sub_category = ?6 limit 10",
+//            nativeQuery = true)
+    @Query(value = "select * from stuff where (id = id or article_type = ?1) and (gender_id = ?2 and master_category != ?3 and season = ?4) limit 10",
             nativeQuery = true)
-    List<Stuff> findCVStuff(String articleTypes, String baseColors, Long Gender, String masterCategory, String season, String subCategory);
+    List<Stuff> findCVStuff(String articleTypes, Long Gender, String masterCategory, String season);
 
 
 }

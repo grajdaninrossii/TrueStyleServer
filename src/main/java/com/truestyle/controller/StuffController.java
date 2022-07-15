@@ -2,7 +2,6 @@ package com.truestyle.controller;
 
 import com.truestyle.entity.Stuff;
 import com.truestyle.pojo.MessageResponse;
-import com.truestyle.repository.UserRepository;
 import com.truestyle.service.StuffService;
 import com.truestyle.service.WardrobeService;
 import org.springframework.beans.factory.annotation.Autowired;

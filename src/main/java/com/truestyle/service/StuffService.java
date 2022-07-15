@@ -36,10 +36,11 @@ public class StuffService {
     private void fillUniqueData(){
         assert stuffRepository != null;
         articleTypes = stuffRepository.findArticleTypes();
-        season = stuffRepository.findUniqueSeasons();
+        season = Arrays.asList("Fall", "Summer", "Winter", "Spring", "NaN");
         subCategory = stuffRepository.findSubCategory();
         baseColors = stuffRepository.findColors();
-        masterCategory = stuffRepository.findMasterCategory();
+        masterCategory = Arrays.asList("Apparel", "Accessories", "Footwear", "Personal Care", "Free Items",
+                "Sporting Goods", "Home");;
         gender = (List<Gender>) genderRepository.findAll();
     }
 
@@ -63,9 +64,12 @@ public class StuffService {
 
     // Получение шмоток по характеристикам
     public List<Stuff> getStuffML(List<Integer> data){
+        System.out.println(data.toString());
         List<String> characters = getStuffCharacters(data);
-        return stuffRepository.findCVStuff(characters.get(0), characters.get(1), gnId,
-                characters.get(2), characters.get(3), characters.get(4));
+        System.out.println(characters.toString());
+//        System.out.println(this.articleTypes.toString());
+        return stuffRepository.findCVStuff(characters.get(0), gnId,
+                characters.get(2), characters.get(3));
     }
 
     public String addOneStuff(Stuff stuff) {

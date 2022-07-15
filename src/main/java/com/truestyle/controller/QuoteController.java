@@ -1,14 +1,11 @@
 package com.truestyle.controller;
 
 import com.truestyle.entity.Quote;
-import com.truestyle.service.QueteService;
+import com.truestyle.service.QuoteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,7 +16,7 @@ public class QuoteController {
 
     private static Logger log = LogManager.getLogger(TestController.class);
     @Autowired
-    private QueteService queteService;
+    private QuoteService quoteService;
 
     /** Получить рандомную цитату
      *
@@ -27,7 +24,7 @@ public class QuoteController {
      */
     @GetMapping("/random")
     public Quote Quote(){
-        return queteService.getRandomQuote();
+        return quoteService.getRandomQuote();
     }
 
 }

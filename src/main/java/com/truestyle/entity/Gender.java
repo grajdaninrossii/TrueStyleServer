@@ -4,6 +4,7 @@ package com.truestyle.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Proxy;
 
 import java.util.Objects;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Proxy(lazy = false)
 @Table(name = "gender",
         uniqueConstraints = {
             @UniqueConstraint(columnNames = "gender_name")
