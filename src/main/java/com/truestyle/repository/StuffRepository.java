@@ -45,7 +45,7 @@ public interface StuffRepository extends CrudRepository<Stuff, Long> {
     // Чекнуть запрос
 //    @Query(value = "select * from stuff where article_type = ?1 and base_color =?2 and gender_id = ?3 and master_category = ?4 and season = ?5 and sub_category = ?6 limit 10",
 //            nativeQuery = true)
-    @Query(value = "select * from stuff where (id = id or article_type = ?1) and (gender_id = ?2 and master_category != ?3 and season = ?4) limit 10",
+    @Query(value = "select * from stuff where article_type = ?1 and gender_id = ?2 and master_category = ?3 and season = ?4 limit 10",
             nativeQuery = true)
     List<Stuff> findCVStuff(String articleTypes, Long Gender, String masterCategory, String season);
 
