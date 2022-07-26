@@ -46,6 +46,19 @@ public class WardrobeController {
         return wardrobeService.getWardrobeBySeason(season);
     }
 
+    @GetMapping("/check")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    public ResponseEntity<?> checkStuffInWardrobe(@RequestParam Long id){
+         Boolean result = wardrobeService.checkStuffInWardrobe(id);
+
+        // Если шмотка была у пользователя
+        if (Boolean.TRUE.equals(result)){
+            return ResponseEntity.ok(new MessageResponse("Stuff has already been added"));
+        }
+        // Иначе
+        return ResponseEntity.badRequest().body(new MessageResponse("Stuff didn't add"));
+    }
+
     /** Добавить шмотку в гардероб пользователю
      *
      * @param id_stuff - id шмотки + нужен токен!

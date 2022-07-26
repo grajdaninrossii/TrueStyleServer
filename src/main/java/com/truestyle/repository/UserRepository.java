@@ -18,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Boolean existsByUsername(String username);
     Boolean existsByEmail(String email);
+
+    @Query(value = "select EXISTS(select * from wardrobe where user_id = ?1 and stuff_id = ?2)",
+            nativeQuery = true)
+    Boolean existsStuffInWardrobe(Long userId, Long stuffId);
 }

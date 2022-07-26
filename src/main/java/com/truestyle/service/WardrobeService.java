@@ -3,6 +3,7 @@ package com.truestyle.service;
 import com.truestyle.entity.Stuff;
 import com.truestyle.entity.User;
 import com.truestyle.repository.RoleRepository;
+import com.truestyle.repository.StuffRepository;
 import com.truestyle.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class WardrobeService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    StuffRepository stuffRepository;
 
     Authentication auth;
 
@@ -44,13 +48,20 @@ public class WardrobeService {
         return seasonClothes;
     }
 
+    public Boolean checkStuffInWardrobe(Long stuffId){
+        auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(auth.getName()).orElseThrow(() -> new RuntimeException("Error, User is not found, но аутентифицирован!))"));
+        Boolean result = userRepository.existsStuffInWardrobe(user.getId(), stuffId);
+        return result;
+    }
+
     // Добавить шмотку пользователю
     public Boolean addStuffInWardrobe(Stuff stuff){
         auth = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(auth.getName()).orElseThrow(() -> new RuntimeException("Error, User is not found, но аутентифицирован!))"));
         Boolean result = user.addStuff(stuff);
         userRepository.save(user);
-        log.debug("test:" + user.toString());
+//        log.debug("test:" + user.toString());
 //        System.out.println("test2:" + user.toString());
         return result;
     }
